@@ -29,7 +29,7 @@ public class Session {
 
         while (this.state != 6) {
             switch (this.state) {
-                case 1:
+                case 1:  // 正在读取卡号
                     card = this.atm.getCardReader().readCard();
                     if (card != null) {
                         this.state = 2;
@@ -38,42 +38,40 @@ public class Session {
                         this.state = 5;
                     }
                     break;
-                case 2:
+                case 2:  // 正在读取密码
                     try {
                         this.pin = this.atm.getCustomerConsole().readPIN("Please enter your PIN\nThen press ENTER");
                         Status stat = Simulation.getInstance().getSimulatedBank().checkPIN(card, this.pin);
-                        if (!stat.isInvalidPIN()) {
+                        for (int i = 0; i < 2 && stat.isInvalidPIN(); ++i) {
+                            this.pin = this.atm.getCustomerConsole().readPIN("PIN was incorrect\nPlease re-enter your PIN\nThen press ENTER");
+                            this.atm.getCustomerConsole().display("");
+                            stat = Simulation.getInstance().getSimulatedBank().checkPIN(card, this.pin);
+                        }
+
+                        if (stat.isInvalidPIN()) {
+                            this.atm.getCardReader().retainCard();
+                            this.atm.getCustomerConsole().display("Your card has been retained\nPlease contact the bank.");
+
+                            try {
+                                Thread.sleep(5000L);
+                            } catch (InterruptedException ignored) {
+                            }
+
+                            this.atm.getCustomerConsole().display("");
+                            this.state = 6;
+                        } else {
                             if (!stat.isSuccess()) {
                                 this.atm.getCustomerConsole().display(stat.toString());
                                 this.state = 5;
                             } else {
                                 this.state = 3;
                             }
-                        } else {
-                            for (int i = 0; i < 2 && stat.isInvalidPIN(); ++i) {
-                                this.pin = this.atm.getCustomerConsole().readPIN("PIN was incorrect\nPlease re-enter your PIN\nThen press ENTER");
-                                this.atm.getCustomerConsole().display("");
-                                stat = Simulation.getInstance().getSimulatedBank().checkPIN(card, this.pin);
-                            }
-
-                            if (stat.isInvalidPIN()) {
-                                this.atm.getCardReader().retainCard();
-                                this.atm.getCustomerConsole().display("Your card has been retained\nPlease contact the bank.");
-
-                                try {
-                                    Thread.sleep(5000L);
-                                } catch (InterruptedException ignored) {
-                                }
-
-                                this.atm.getCustomerConsole().display("");
-                                this.state = 6;
-                            }
                         }
                     } catch (CustomerConsole.Cancelled var8) {
                         this.state = 5;
                     }
                     break;
-                case 3:
+                case 3:  // 选择四种操作之一:withdraw（取）,deposit（存）,transfer（转账）,balance inquiry（余额查询）
                     try {
                         currentTransaction = Transaction.makeTransaction(this.atm, this, card, this.pin);
                         this.state = 4;
@@ -81,7 +79,7 @@ public class Session {
                         this.state = 5;
                     }
                     break;
-                case 4:
+                case 4:  // 执行事务逻辑
                     try {
                         boolean doAgain = currentTransaction.performTransaction();
                         if (doAgain) {
@@ -93,7 +91,7 @@ public class Session {
                         this.state = 6;
                     }
                     break;
-                case 5:
+                case 5:  // 弹出银行卡
                     this.atm.getCardReader().ejectCard();
                     this.state = 6;
             }
