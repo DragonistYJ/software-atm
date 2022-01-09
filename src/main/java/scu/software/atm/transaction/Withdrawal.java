@@ -16,11 +16,11 @@ public class Withdrawal extends Transaction {
     protected Message getSpecificsFromCustomer() throws CustomerConsole.Cancelled {
         this.from = this.atm.getCustomerConsole().readMenuChoice("Account to withdraw from", AccountInformation.ACCOUNT_NAMES);
         String[] amountOptions = new String[]{"$20", "$40", "$60", "$100", "$200"};
-        Money[] amountValues = new Money[]{new Money(40), new Money(60), new Money(100), new Money(200), new Money(20)};
+        Money[] amountValues = new Money[]{new Money(20), new Money(40), new Money(60), new Money(100), new Money(200)};
         String amountMessage = "";
         boolean validAmount = false;
 
-        while(!validAmount) {
+        while (!validAmount) {
             this.amount = amountValues[this.atm.getCustomerConsole().readMenuChoice(amountMessage + "Amount of cash to withdraw", amountOptions)];
             validAmount = this.atm.getCashDispenser().checkCashOnHand(this.amount);
             if (!validAmount) {
