@@ -4,6 +4,10 @@ import scu.software.banking.*;
 
 public class SimulatedBank {
     private static final int[] PIN = new int[]{0, 42, 1234};
+    /**
+     * card=1 {1,2,0}=>{check, saving, no}
+     * card=2 {1,0,3}=>{check, no, market}
+     */
     private static final int[][] ACCOUNT_NUMBER = new int[][]{new int[3], {1, 2, 0}, {1, 0, 3}};
     private static final Money[] WITHDRAWALS_TODAY = new Money[]{new Money(0), new Money(0), new Money(0)};
     private static final Money DAILY_WITHDRAWAL_LIMIT = new Money(300);
