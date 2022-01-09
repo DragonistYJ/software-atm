@@ -26,19 +26,21 @@ public class CustomerConsole {
     }
 
     public synchronized int readMenuChoice(String prompt, String[] menu) throws Cancelled {
-        Simulation.getInstance().clearDisplay();
-        Simulation.getInstance().display(prompt);
+        while (true) {
+            Simulation.getInstance().clearDisplay();
+            Simulation.getInstance().display(prompt);
 
-        for(int i = 0; i < menu.length; ++i) {
-            Simulation.getInstance().display(i + 1 + ") " + menu[i]);
-        }
-
-        String input = Simulation.getInstance().readInput(3, menu.length);
-        Simulation.getInstance().clearDisplay();
-        if (input == null) {
-            throw new Cancelled();
-        } else {
-            return Integer.parseInt(input) - 1;
+            for (int i = 0; i < menu.length; ++i) {
+                Simulation.getInstance().display(i + 1 + ") " + menu[i]);
+            }
+            String input = Simulation.getInstance().readInput(3, menu.length);
+            Simulation.getInstance().clearDisplay();
+            if (input == null) {
+                throw new Cancelled();
+            } else if (Integer.parseInt(input) <= menu.length) {
+                return Integer.parseInt(input) - 1;
+            }
+            prompt = "Your choice is out of range!\n" + prompt;
         }
     }
 
