@@ -82,8 +82,7 @@ public class SimulatedBank {
         } else {
             Money amount = message.getAmount();
             this.BALANCE[accountNumber].add(amount);
-            // 无缘无故减10元，手续费？
-            // this.BALANCE[accountNumber].subtract(new Money(10, 0));
+            this.AVAILABLE_BALANCE[accountNumber].add(amount);
             balances.setBalances(this.BALANCE[accountNumber], this.AVAILABLE_BALANCE[accountNumber]);
             return new SimulatedBank.Success();
         }
