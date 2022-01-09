@@ -7,16 +7,16 @@ public class Simulation {
     public static final int PIN_MODE = 1;
     public static final int AMOUNT_MODE = 2;
     public static final int MENU_MODE = 3;
-    private ATM atm;
-    private SimOperatorPanel operatorPanel;
-    private SimCardReader cardReader;
-    private SimDisplay display;
-    private SimKeyboard keyboard;
-    private SimCashDispenser cashDispenser;
-    private SimEnvelopeAcceptor envelopeAcceptor;
-    private SimReceiptPrinter receiptPrinter;
-    private GUI gui;
-    private SimulatedBank simulatedBank;
+    private final ATM atm;
+    private final SimOperatorPanel operatorPanel;
+    private final SimCardReader cardReader;
+    private final SimDisplay display;
+    private final SimKeyboard keyboard;
+    private final SimCashDispenser cashDispenser;
+    private final SimEnvelopeAcceptor envelopeAcceptor;
+    private final SimReceiptPrinter receiptPrinter;
+    private final GUI gui;
+    private final SimulatedBank simulatedBank;
     private static Simulation theInstance;
 
     public Simulation(ATM atm) {
@@ -88,7 +88,7 @@ public class Simulation {
     public Status sendMessage(Message message, Balances balances) {
         try {
             Thread.sleep(2000L);
-        } catch (InterruptedException var4) {
+        } catch (InterruptedException ignored) {
         }
 
         return this.simulatedBank.handleMessage(message, balances);

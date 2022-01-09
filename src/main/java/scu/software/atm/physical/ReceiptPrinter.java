@@ -10,11 +10,10 @@ public class ReceiptPrinter {
     }
 
     public void printReceipt(Receipt receipt) {
-        Enumeration receiptLines = receipt.getLines();
+        Enumeration<String> receiptLines = receipt.getLines();
 
-        while(receiptLines.hasMoreElements()) {
-            Simulation.getInstance().printReceiptLine((String)receiptLines.nextElement());
+        while (receiptLines.hasMoreElements()) {
+            Simulation.getInstance().printReceiptLine(receiptLines.nextElement());
         }
-
     }
 }

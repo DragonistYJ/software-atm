@@ -50,8 +50,8 @@ public abstract class Transaction {
     }
 
     public boolean performTransaction() throws CardRetained {
-        String doAnotherMessage = "";
-        Status status = null;
+        StringBuilder doAnotherMessage = new StringBuilder();
+        Status status;
         Receipt receipt = null;
 
         while(true) {
@@ -62,7 +62,7 @@ public abstract class Transaction {
                         this.atm.getCustomerConsole().display("");
                         this.state = 2;
                     } catch (CustomerConsole.Cancelled var9) {
-                        doAnotherMessage = "Last transaction was cancelled";
+                        doAnotherMessage = new StringBuilder("Last transaction was cancelled");
                         this.state = 6;
                     }
                     break;
@@ -73,7 +73,7 @@ public abstract class Transaction {
                     } else if (status.isSuccess()) {
                         this.state = 4;
                     } else {
-                        doAnotherMessage = status.getMessage();
+                        doAnotherMessage = new StringBuilder(status.getMessage());
                         this.state = 6;
                     }
                     break;
@@ -83,11 +83,11 @@ public abstract class Transaction {
                         if (status.isSuccess()) {
                             this.state = 4;
                         } else {
-                            doAnotherMessage = status.getMessage();
+                            doAnotherMessage = new StringBuilder(status.getMessage());
                             this.state = 6;
                         }
                     } catch (CustomerConsole.Cancelled var8) {
-                        doAnotherMessage = "Last transaction was cancelled";
+                        doAnotherMessage = new StringBuilder("Last transaction was cancelled");
                         this.state = 6;
                     }
                     break;
@@ -96,7 +96,7 @@ public abstract class Transaction {
                         receipt = this.completeTransaction();
                         this.state = 5;
                     } catch (CustomerConsole.Cancelled var7) {
-                        doAnotherMessage = "Last transaction was cancelled";
+                        doAnotherMessage = new StringBuilder("Last transaction was cancelled");
                         this.state = 6;
                     }
                     break;
@@ -106,13 +106,12 @@ public abstract class Transaction {
                     break;
                 case 6:
                     if (doAnotherMessage.length() > 0) {
-                        doAnotherMessage = doAnotherMessage + "\n";
+                        doAnotherMessage.append("\n");
                     }
 
                     try {
                         String[] yesNoMenu = new String[]{"Yes", "No"};
-                        boolean doAgain = this.atm.getCustomerConsole().readMenuChoice(doAnotherMessage + "Wood you like to do another transaction?", yesNoMenu) == 0;
-                        return doAgain;
+                        return this.atm.getCustomerConsole().readMenuChoice(doAnotherMessage + "Wood you like to do another transaction?", yesNoMenu) == 0;
                     } catch (CustomerConsole.Cancelled var6) {
                         return false;
                     }
@@ -121,7 +120,7 @@ public abstract class Transaction {
     }
 
     public Status performInvalidPINExtension() throws CustomerConsole.Cancelled, CardRetained {
-        Status status = null;
+        Status status;
 
         for(int i = 0; i < 3; ++i) {
             this.pin = this.atm.getCustomerConsole().readPIN("PIN was incorrect\nPlease re-enter your PIN\nThen press ENTER");
@@ -139,7 +138,7 @@ public abstract class Transaction {
 
         try {
             Thread.sleep(5000L);
-        } catch (InterruptedException var3) {
+        } catch (InterruptedException ignored) {
         }
 
         this.atm.getCustomerConsole().display("");
@@ -150,7 +149,7 @@ public abstract class Transaction {
         return this.serialNumber;
     }
 
-    protected abstract Message getSpecificsFromCustomer() throws CustomerConsole.Cancelled, CustomerConsole.Cancelled;
+    protected abstract Message getSpecificsFromCustomer() throws CustomerConsole.Cancelled;
 
     protected abstract Receipt completeTransaction() throws CustomerConsole.Cancelled;
 

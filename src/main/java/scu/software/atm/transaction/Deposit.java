@@ -14,7 +14,9 @@ public class Deposit extends Transaction {
     }
 
     protected Message getSpecificsFromCustomer() throws CustomerConsole.Cancelled {
+        // 账户的下标
         this.to = this.atm.getCustomerConsole().readMenuChoice("Account to deposit to", AccountInformation.ACCOUNT_NAMES);
+        // 用户输入的汇款金额
         this.amount = this.atm.getCustomerConsole().readAmount("Amount to deposit");
         return new Message(1, this.card, this.pin, this.serialNumber, -1, this.to, this.amount);
     }

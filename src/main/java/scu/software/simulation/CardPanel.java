@@ -9,11 +9,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 class CardPanel extends Panel {
-    private TextField cardNumberField;
+    private final TextField cardNumberField;
 
     CardPanel() {
         this.setLayout(new GridLayout(0, 1, 0, 0));
-        this.setFont(new Font("Monospaced", 0, 14));
+        this.setFont(new Font("Monospaced", Font.PLAIN, 14));
         this.add(new Label("A real ATM would have a magnetic", 1));
         this.add(new Label("stripe reader to read the card", 1));
         this.add(new Label("For purposes of the simulation,", 1));
@@ -23,11 +23,9 @@ class CardPanel extends Panel {
         this.add(new Label("greater than zero will be treated as", 1));
         this.add(new Label("an unreadable card)", 1));
         this.cardNumberField = new TextField(30);
-        this.cardNumberField.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                synchronized(CardPanel.this) {
-                    CardPanel.this.notify();
-                }
+        this.cardNumberField.addActionListener(e -> {
+            synchronized (CardPanel.this) {
+                CardPanel.this.notify();
             }
         });
         Panel cardNumberPanel = new Panel();
@@ -41,7 +39,7 @@ class CardPanel extends Panel {
 
         try {
             this.wait();
-        } catch (InterruptedException var4) {
+        } catch (InterruptedException ignored) {
         }
 
         int cardNumber;

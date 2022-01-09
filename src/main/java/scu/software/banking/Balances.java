@@ -19,4 +19,12 @@ public class Balances {
     public Money getAvailable() {
         return this.available;
     }
+
+    @Override
+    public String toString() {
+        return "Balances{" +
+                "total=" + total +
+                ", available=" + available +
+                '}';
+    }
 }

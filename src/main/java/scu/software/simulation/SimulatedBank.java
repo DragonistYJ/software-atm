@@ -5,10 +5,12 @@ import scu.software.banking.*;
 public class SimulatedBank {
     private static final int[] PIN = new int[]{0, 42, 1234};
     private static final int[][] ACCOUNT_NUMBER = new int[][]{new int[3], {1, 2, 0}, {1, 0, 3}};
-    private static Money[] WITHDRAWALS_TODAY = new Money[]{new Money(0), new Money(0), new Money(0)};
+    private static final Money[] WITHDRAWALS_TODAY = new Money[]{new Money(0), new Money(0), new Money(0)};
     private static final Money DAILY_WITHDRAWAL_LIMIT = new Money(300);
-    private Money[] BALANCE = new Money[]{new Money(0), new Money(100), new Money(1000), new Money(5000)};
-    private Money[] AVAILABLE_BALANCE = new Money[]{new Money(0), new Money(100), new Money(1000), new Money(5000)};
+
+    // 初始化的3种类型账户里的余额
+    private final Money[] BALANCE = new Money[]{new Money(0), new Money(100), new Money(1000), new Money(5000)};
+    private final Money[] AVAILABLE_BALANCE = new Money[]{new Money(0), new Money(100), new Money(1000), new Money(5000)};
 
     public SimulatedBank() {
     }
@@ -65,7 +67,7 @@ public class SimulatedBank {
     private Status initiateDeposit(Message message) {
         int cardNumber = message.getCard().getNumber();
         int accountNumber = ACCOUNT_NUMBER[cardNumber][message.getToAccount()];
-        return (Status)(accountNumber == 0 ? new SimulatedBank.Failure("Invalid account type") : new SimulatedBank.Success());
+        return accountNumber == 0 ? new Failure("Invalid account type") : new Success();
     }
 
     private Status completeDeposit(Message message, Balances balances) {
@@ -76,7 +78,8 @@ public class SimulatedBank {
         } else {
             Money amount = message.getAmount();
             this.BALANCE[accountNumber].add(amount);
-            this.BALANCE[accountNumber].subtract(new Money(10, 0));
+            // 无缘无故减10元，手续费？
+            // this.BALANCE[accountNumber].subtract(new Money(10, 0));
             balances.setBalances(this.BALANCE[accountNumber], this.AVAILABLE_BALANCE[accountNumber]);
             return new SimulatedBank.Success();
         }
@@ -122,14 +125,14 @@ public class SimulatedBank {
 
     public Status checkPIN(Card card, int pin) {
         if (card.getNumber() >= 1 && card.getNumber() <= PIN.length) {
-            return (Status)(pin != PIN[card.getNumber()] ? new SimulatedBank.InvalidPIN() : new SimulatedBank.Success());
+            return pin != PIN[card.getNumber()] ? new InvalidPIN() : new Success();
         } else {
             return new SimulatedBank.Failure("Invalid card");
         }
     }
 
     private static class Failure extends Status {
-        private String message;
+        private final String message;
 
         public Failure(String message) {
             this.message = message;

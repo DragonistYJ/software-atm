@@ -6,18 +6,18 @@ import scu.software.banking.Money;
 import java.net.InetAddress;
 
 public class ATM implements Runnable {
-    private int id;
-    private String place;
-    private String bankName;
-    private InetAddress bankAddress;
-    private CardReader cardReader;
-    private CashDispenser cashDispenser;
-    private CustomerConsole customerConsole;
-    private EnvelopeAcceptor envelopeAcceptor;
-    private Log log;
-    private NetworkToBank networkToBank;
-    private OperatorPanel operatorPanel;
-    private ReceiptPrinter receiptPrinter;
+    private final int id;
+    private final String place;
+    private final String bankName;
+    private final InetAddress bankAddress;
+    private final CardReader cardReader;
+    private final CashDispenser cashDispenser;
+    private final CustomerConsole customerConsole;
+    private final EnvelopeAcceptor envelopeAcceptor;
+    private final Log log;
+    private final NetworkToBank networkToBank;
+    private final OperatorPanel operatorPanel;
+    private final ReceiptPrinter receiptPrinter;
     private int state;
     private boolean switchOn;
     private boolean cardInserted;
@@ -46,45 +46,43 @@ public class ATM implements Runnable {
     public void run() {
         Session currentSession = null;
 
-        while(true) {
-            while(true) {
-                switch(this.state) {
-                    case 0:
-                        this.customerConsole.display("Not currently available");
-                        synchronized(this) {
-                            try {
-                                this.wait();
-                            } catch (InterruptedException var6) {
-                            }
+        while (true) {
+            switch (this.state) {
+                case 0:
+                    this.customerConsole.display("Not currently available");
+                    synchronized (this) {
+                        try {
+                            this.wait();
+                        } catch (InterruptedException ignored) {
                         }
+                    }
 
-                        if (this.switchOn) {
-                            this.performStartup();
-                            this.state = 1;
-                        }
-                        break;
-                    case 1:
-                        this.customerConsole.display("Please insert your card");
-                        this.cardInserted = false;
-                        synchronized(this) {
-                            try {
-                                this.wait();
-                            } catch (InterruptedException var4) {
-                            }
-                        }
-
-                        if (this.cardInserted) {
-                            currentSession = new Session(this);
-                            this.state = 2;
-                        } else if (!this.switchOn) {
-                            this.performShutdown();
-                            this.state = 0;
-                        }
-                        break;
-                    case 2:
-                        currentSession.performSession();
+                    if (this.switchOn) {
+                        this.performStartup();
                         this.state = 1;
-                }
+                    }
+                    break;
+                case 1:
+                    this.customerConsole.display("Please insert your card");
+                    this.cardInserted = false;
+                    synchronized (this) {
+                        try {
+                            this.wait();
+                        } catch (InterruptedException ignored) {
+                        }
+                    }
+
+                    if (this.cardInserted) {
+                        currentSession = new Session(this);
+                        this.state = 2;
+                    } else if (!this.switchOn) {
+                        this.performShutdown();
+                        this.state = 0;
+                    }
+                    break;
+                case 2:
+                    currentSession.performSession();
+                    this.state = 1;
             }
         }
     }

@@ -7,9 +7,9 @@ import java.util.Date;
 import java.util.Enumeration;
 
 public abstract class Receipt {
-    private String[] headingPortion = new String[4];
+    private final String[] headingPortion = new String[4];
     protected String[] detailsPortion;
-    private String[] balancesPortion;
+    private final String[] balancesPortion;
 
     protected Receipt(ATM atm, Card card, Transaction transaction, Balances balances) {
         this.headingPortion[0] = (new Date()).toString();
@@ -21,8 +21,8 @@ public abstract class Receipt {
         this.balancesPortion[1] = "AVAILABLE: " + balances.getAvailable();
     }
 
-    public Enumeration getLines() {
-        return new Enumeration() {
+    public Enumeration<String> getLines() {
+        return new Enumeration<String>() {
             private int portion = 0;
             private int index = 0;
 
@@ -30,7 +30,7 @@ public abstract class Receipt {
                 return this.portion < 2 || this.index < Receipt.this.balancesPortion.length;
             }
 
-            public Object nextElement() {
+            public String nextElement() {
                 String line = null;
                 switch(this.portion) {
                     case 0:

@@ -19,18 +19,14 @@ public class ATMMain {
     }
 
     public static void main(String[] args) {
-        ATM theATM = new ATM(42, "Gordon College", "First National Bank of Podunk", (InetAddress)null);
+        ATM theATM = new ATM(42, "Gordon College", "First National Bank of Podunk", null);
         Simulation theSimulation = new Simulation(theATM);
         Frame mainFrame = new Frame("ATM Simulation");
         mainFrame.add(theSimulation.getGUI());
         MenuBar menuBar = new MenuBar();
         Menu fileMenu = new Menu("File");
         MenuItem quitItem = new MenuItem("Quit", new MenuShortcut(81));
-        quitItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                System.exit(0);
-            }
-        });
+        quitItem.addActionListener(e -> System.exit(0));
         fileMenu.add(quitItem);
         menuBar.add(fileMenu);
         mainFrame.setMenuBar(menuBar);
